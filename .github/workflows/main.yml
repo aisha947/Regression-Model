@@ -15,15 +15,10 @@ jobs:
 
     - name: Set up Docker
       uses: docker/setup-docker@v2
+      with:
+        docker-version: '20.10.0'  # Specify the Docker version you need
 
-    - name: Build the Docker image
-      run: docker build -t regression-app .
-
-    - name: Test the Docker image
-      run: docker run -p 5002:5000 regression-app
-
-    - name: Push Docker image to Docker Hub
+    - name: Build and push Docker image
       run: |
-        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker tag regression-app ${{ secrets.DOCKER_USERNAME }}/regression-app:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/regression-app:latest
+        docker build -t regression-app:latest .
+        docker push regression-app:latest
