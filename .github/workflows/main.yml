@@ -1,0 +1,29 @@
+name: Docker Flask API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-docker@v2
+
+    - name: Build the Docker image
+      run: docker build -t regression-app .
+
+    - name: Test the Docker image
+      run: docker run -p 5002:5000 regression-app
+
+    - name: Push Docker image to Docker Hub
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker tag regression-app ${{ secrets.DOCKER_USERNAME }}/regression-app:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/regression-app:latest
